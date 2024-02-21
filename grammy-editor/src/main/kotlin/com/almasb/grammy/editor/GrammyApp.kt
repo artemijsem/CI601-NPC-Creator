@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.text.Font
 import javafx.stage.Stage
+import javax.json.*;
 
 /**
  *
@@ -31,9 +32,10 @@ class GrammyApp : Application() {
         val area1 = TextArea()
         area1.font = Font.font(38.0)
         area1.isWrapText = true
-        area1.text = "{\n" +
-                "  \"origin\": []\n" +
-                "}"
+        area1.text = "World:\n" +
+                "Characters:\n" +
+                "Location:\n" +
+                "Context:"
 
         val area2 = TextArea()
         area2.font = Font.font(38.0)
@@ -41,17 +43,28 @@ class GrammyApp : Application() {
 
         val btnRun = Button("Run")
         btnRun.setOnAction {
-            val grammar = Grammy.createGrammar(area1.text)
+
+            val openAItext = OpenAI.run(area1.text);
+            val openAItexts = openAItext.split("@").toTypedArray()
+
+            for (a in openAItexts)
+            {
+                println(a);
+                val grammar = Grammy.createGrammar(a);
+                try {
+                    area2.text += grammar.flatten() + "\n\n"
+                } catch (e: Exception) {
+                    area2.text = "Syntax error: $e"
+                }
+
+            }
+
 
 //            grammar.addSymbol("noun", NOUNS)
 //            grammar.addSymbol("verb", VERBS)
 //            grammar.addSymbol("adj", ADJECTIVES)
 
-            try {
-                area2.text = grammar.flatten()
-            } catch (e: Exception) {
-                area2.text = "Syntax error: $e"
-            }
+
         }
 
         val btnCreate = Button("Random Text")
