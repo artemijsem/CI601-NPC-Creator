@@ -18,6 +18,12 @@
             <artifactId>grammy</artifactId>
             <version>${grammy.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>OpenAI</artifactId>
+            <version>0.1.2</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

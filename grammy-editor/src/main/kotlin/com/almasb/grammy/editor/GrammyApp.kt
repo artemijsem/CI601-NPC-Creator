@@ -1,6 +1,7 @@
 package com.almasb.grammy.editor
 
 import com.almasb.grammy.Grammy
+import com.github.almasb.OpenAI
 import javafx.application.Application
 import javafx.scene.Parent
 import javafx.scene.Scene
@@ -26,7 +27,7 @@ class GrammyApp : Application() {
     private fun createContent(): Parent {
         val root = VBox(10.0)
         root.setPrefSize(800.0, 600.0)
-
+        /*OpenAI.run();*/
         val area1 = TextArea()
         area1.font = Font.font(38.0)
         area1.isWrapText = true
