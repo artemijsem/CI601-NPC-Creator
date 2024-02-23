@@ -14,7 +14,7 @@ import java.net.http.HttpResponse;
 
 public class OpenAI {
 
-    private static String SecretKey = "Bearer";
+    private static String SecretKey = "Bearer ";
 
     private static String assistantID = "asst_kPJHExoqpt6WK7EqWWh3jzBk";
 
@@ -193,6 +193,7 @@ public class OpenAI {
 
         HttpResponse<String> response;
 
+        runIsNotComplete = true;
 
 
         response = client.send(getAssistant(assistantID), HttpResponse.BodyHandlers.ofString());
