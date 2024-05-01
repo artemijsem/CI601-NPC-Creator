@@ -34,5 +34,21 @@
         <artifactId>javax.json</artifactId>
         <version>1.1.4</version>
     </dependency>
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl</artifactId>
+            <version>21+dev-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl-intelligence</artifactId>
+            <version>21+dev-SNAPSHOT</version>
+        </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>oss.sonatype.org-snapshot</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
 </project>

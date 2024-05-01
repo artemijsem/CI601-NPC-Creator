@@ -1,6 +1,7 @@
 package com.almasb.grammy.editor
 
 import com.almasb.grammy.Grammy
+import com.fasterxml.jackson.core.io.JsonEOFException
 import com.github.almasb.OpenAI
 import javafx.application.Application
 import javafx.scene.Parent
@@ -11,13 +12,16 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.text.Font
 import javafx.stage.Stage
+import javafx.stage.FileChooser
+import java.io.File
+import java.io.PrintWriter
 import javax.json.*;
 
 /**
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class GrammyApp : Application() {
+class GrammyApp : Application(){
 
 //    companion object {
 //        private val VERBS = Files.readAllLines(Path.of(RandomStoryCreator::class.java.getResource("verbs.txt").toURI()))
@@ -41,23 +45,15 @@ class GrammyApp : Application() {
         area2.font = Font.font(38.0)
         area2.isWrapText = true
 
+
+
         val btnRun = Button("Run")
         btnRun.setOnAction {
 
-            val openAItext = OpenAI.run(area1.text);
-            val openAItexts = openAItext.split("@").toTypedArray()
 
-            for (a in openAItexts)
-            {
-                println(a);
-                val grammar = Grammy.createGrammar(a);
-                try {
-                    area2.text += grammar.flatten() + "\n\n"
-                } catch (e: Exception) {
-                    area2.text = "Syntax error: $e"
-                }
+            area2.text += generateDialogue(area1.text)
 
-            }
+
 
 
 //            grammar.addSymbol("noun", NOUNS)
@@ -74,6 +70,7 @@ class GrammyApp : Application() {
             area1.text = creator.createStoryAsJSON()
         }
 
+
         val box = HBox(area1, area2)
         box.prefHeight = 550.0
 
@@ -85,7 +82,48 @@ class GrammyApp : Application() {
     override fun start(stage: Stage) {
         stage.scene = Scene(createContent())
         stage.show()
+
+
     }
+}
+
+fun generateDialogue(inputText : String): String {
+    var outputText = "";
+    try {
+        val openAItext = OpenAI.run(inputText);
+
+        val openAItexts = openAItext.split("@").toTypedArray()
+        for (a in openAItexts)
+            {
+                println(a)
+                val grammar = Grammy.createGrammar(a);
+                try {
+                    outputText += grammar.flatten() + "\n\n"
+                } catch (e: Exception) {
+                    println( "Syntax error: $e" )
+                    outputText = generateDialogue(inputText)
+                }
+
+            }
+
+        }
+
+        catch (e: JsonEOFException)
+        {
+            println("\n\n\n=======================!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!=====================\n\n\n ERROR: $e\n\n\n==================!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!==========================\n\n\n")
+            outputText + "Error"
+            outputText = generateDialogue(inputText)
+        }
+
+
+    val out = PrintWriter("Output/Text_Output.txt")
+
+    out.println(outputText)
+
+    out.close()
+
+
+    return outputText
 }
 
 fun main() {

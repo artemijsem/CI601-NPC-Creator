@@ -14,7 +14,7 @@ import java.net.http.HttpResponse;
 
 public class OpenAI {
 
-    private static String SecretKey = "Bearer ";
+    private static String SecretKey = "Bearer " + System.getenv("SECRET_KEY");
 
     private static String assistantID = "asst_kPJHExoqpt6WK7EqWWh3jzBk";
 
@@ -24,9 +24,6 @@ public class OpenAI {
 
     private static boolean runIsNotComplete = true;
 
-    private static String GptModel = "gpt-3.5-turbo";
-
-    private static double temperature = 0.7;
 
     public static HttpRequest createThread() {
         HttpRequest request = HttpRequest.newBuilder()
@@ -50,15 +47,6 @@ public class OpenAI {
         return request;
     }
 
-    public static HttpRequest getThread(String threadID)
-    {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(getURI("https://api.openai.com/v1/threads/" + threadID))
-                .headers("Content-Type", "application/json", "Authorization", SecretKey, "OpenAI-Beta", "assistants=v1")
-                .GET()
-                .build();
-        return request;
-    }
 
     public static HttpRequest getRun(String threadID, String runID)
     {
@@ -96,46 +84,6 @@ public class OpenAI {
         return request;
     }
 
-    public static HttpRequest getMessage(String threadID, String messageID)
-    {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(getURI("https://api.openai.com/v1/threads/" + threadID + "/messages/" + messageID))
-                .headers("Content-Type", "application/json", "Authorization", SecretKey, "OpenAI-Beta", "assistants=v1")
-                .GET()
-                .build();
-        return request;
-    }
-
-
-
-    // Serialize a HTTP request body for OpenAI API
-    public static JsonObject OpenAIBody(String model, JsonArray messages, double temp)
-    {
-        JsonObjectBuilder objectBuilder = Json.createObjectBuilder()
-                .add("model", model)
-                .add("messages", messages)
-                .add("temperature", temp);
-
-
-        JsonObject JsonOutput = objectBuilder.build();
-
-        return JsonOutput;
-    }
-
-    // Serialize a message for the request body
-    public static JsonArray createMessage(String content)
-    {
-        JsonObject MessageObj = Json.createObjectBuilder()
-                .add("role", "user")
-                .add("content", content)
-                .build();
-
-        JsonArray output = Json.createArrayBuilder()
-                .add(MessageObj)
-                .build();
-
-        return output;
-    }
 
     public static HttpRequest getAssistant(String assisstantID)
     {
@@ -148,15 +96,6 @@ public class OpenAI {
     }
 
 
-    public static HttpRequest testConnection(JsonObject body) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(getURI("https://api.openai.com/v1/chat/completions"))
-                .headers("Content-Type", "application/json", "Authorization", SecretKey)
-                .POST(HttpRequest.BodyPublishers.ofString(body.toString()))
-                .build();
-
-        return request;
-    }
 
     // Error catching method for incorrect URIs
     public static URI getURI(String rawURI)
@@ -178,16 +117,6 @@ public class OpenAI {
 
 
     public static String run(String message) throws IOException, InterruptedException {
-        /*
-        curl https://api.openai.com/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $OPENAI_API_KEY" \
-  -d '{
-     "model": "gpt-3.5-turbo",
-     "messages": [{"role": "user", "content": "Say this is a test!"}],
-     "temperature": 0.7
-   }'
-         */
 
         HttpClient client = HttpClient.newHttpClient();
 
@@ -244,7 +173,7 @@ public class OpenAI {
 
         System.out.println("RUN IS COMPLETE! RETRIEVING MESSAGES!");
         //////
-
+        Thread.sleep(10000);
 
         response = client.send(listMessages(threadID), HttpResponse.BodyHandlers.ofString());
 
